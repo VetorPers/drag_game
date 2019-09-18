@@ -1,0 +1,288 @@
+html,
+body,
+p {
+    margin: 0px;
+    padding: 0px;
+    font-family: 'Microsoft YaHei UI';
+}
+
+html,
+body,
+header,
+content {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    background-image: url('/img/bg2y.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.login-group {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 14%;
+    height: 200px;
+}
+
+.btn {
+    font-size: 31px;
+    font-weight: bold;
+    width: 100%;
+    height: 52px;
+    border: 1px solid #fff;
+    outline: none;
+    text-align: center;
+    line-height: 52px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.btn-manage,
+.btn-student,
+.btn-others {
+    background-color: #6CEDCA;
+    color: #fef6b4;
+    position: relative;
+}
+
+.choice-status>.btn:hover {
+    background: #037a8d
+}
+
+.btn-manage>div,
+.btn-student>div,
+.btn-others>div {
+    margin-left: 5%;
+}
+
+.btn-manage::before,
+.btn-student::before,
+.btn-others::before {
+    content: "";
+    background-image: url("/img/arrow.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    position: absolute;
+    display: block;
+    width: 12%;
+    height: 34px;
+    top: 10px;
+    left: 8%;
+}
+
+.btn-account {
+    background-color: #4474BB;
+    color: #fff;
+}
+
+.btn-key {
+    background-color: #20E0C3;
+    color: #fff;
+}
+
+.btn-login {
+    background-color: #3A6B90;
+    color: #ffaed4;
+}
+
+.login-group .btn-play {
+    width: 105%;
+    height: 80px;
+    border: none;
+    background-image: url("/img/play.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+.header-box {
+    width: 100%;
+    height: 22%;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.header-box .cloud-group {
+    width: 100%;
+    height: 100%;
+}
+
+.header-box .bird {
+    position: absolute;
+    top: 60%;
+    right: 33%;
+    width: 4%;
+    animation: birdMove .5s linear infinite alternate;
+    z-index:3;
+}
+
+.header-box .sun {
+    position: absolute;
+    top: 20%;
+    right: 7%;
+    width: 5%;
+    z-index: 1;
+}
+
+.cloud-group .cloud {
+    float: left;
+    position: absolute;
+    animation: cloudMove linear infinite normal;
+    z-index: 2;
+}
+
+.cloud-group .cloud-middle {
+    top: 12%;
+    right: -248px;
+    width: 12%;
+    animation-duration: 9s;
+    animation-delay: 3s;
+}
+
+.cloud-group .cloud-small {
+    top: 64%;
+    right: -145px;
+    width: 7%;
+    animation-duration: 9s;
+    animation-delay: 5s;
+}
+
+.cloud-group .cloud-large {
+    top: 30%;
+    right: -400px;
+    width: 21%;
+    animation-duration: 9s;
+}
+
+.cloud-small>img {
+    width: 100%;
+}
+
+.cloud-middle>img {
+    width: 100%;
+}
+
+.cloud-large>img {
+    width: 100%;
+}
+@keyframes cloudMove {
+    0% {
+        right: -400px;
+    }
+    100% {
+        right: 1920px;
+    }
+}
+@keyframes birdMove {
+    0% {
+        top: 60%;
+    }
+    100% {
+        top: 40%;
+    }
+}
+.user-login {
+    display: none;
+}
+
+.over-box {
+    width: 16%;
+    height: 230px;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.score{
+    width: 100%;
+    height: 200px;
+    color: #ec6faf;
+    font-size: 60px;
+    text-align: center;
+    font-weight: bold;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-bottom: 10px;
+    text-shadow: 3px 3px #fff;
+}
+.pass{
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    /*height: 29px;*/
+}
+.pass image{
+    width: 80%;
+}
+.score{
+    height: 189px;
+}
+@media screen and (max-width: 1680px) {
+    .btn {
+        font-size: 24px;
+    }
+    .question-content {
+        font-size: 20px;
+    }
+    .question-content .option {
+        height: 90px;
+        line-height: 92px;
+    }
+    .question-content-box .next-page {
+        font-size: 20px;
+    }
+    .score{
+        font-size: 52px;
+    }
+}
+
+@media screen and (max-width: 1440px) {
+    .btn {
+        font-size: 22px;
+    }
+    .question-content {
+        font-size: 18px;
+    }
+    .question-content .option {
+        height: 80px;
+        line-height: 82px;
+    }
+    .question-content-box .next-page {
+        font-size: 18px;
+    }
+    .score{
+        font-size: 46px;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .btn {
+        font-size: 16px;
+    }
+    .question-content {
+        font-size: 16px;
+    }
+    .question-content .option {
+        height: 60px;
+        line-height: 62px;
+    }
+    .question-content-box .next-page {
+        font-size: 16px;
+    }
+    .score{
+        font-size: 38px;
+    }
+}
