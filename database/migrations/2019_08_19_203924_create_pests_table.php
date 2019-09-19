@@ -19,6 +19,9 @@ class CreatePestsTable extends Migration
             $table->text('img');
             $table->integer('order');
             $table->unsignedTinyInteger('time');
+            $table->unsignedTinyInteger('right_num');
+            $table->unsignedTinyInteger('disturb_num');
+            $table->unsignedTinyInteger('time');
             $table->unsignedTinyInteger('ascore');
             $table->unsignedTinyInteger('pass_score');
             $table->timestamps();

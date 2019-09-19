@@ -4,13 +4,11 @@ namespace App\Http\Controllers;
 
 
 use App\Pest;
-use App\Record;
-use App\Question;
-use App\RecordDetail;
 use App\User;
+use App\Answer;
+use App\Record;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class PestController extends Controller
 {
@@ -25,16 +23,6 @@ class PestController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function login(Request $request)
-    {
-        return view('login');
-    }
-
-    /**
      * 登陆
      *
      * @param \Illuminate\Http\Request $request
@@ -46,21 +34,14 @@ class PestController extends Controller
         $type = $request->input('type', 1);
         if ($type == 1) {
             $user = User::firstOrCreate(['name' => '游客']);
-            Auth::loginUsingId($user->id);
-
-            return $this->resOk();
         }
 
         if ($type == 2) {
             $user = User::where('number', $request->input('number'))->first();
             if ( !$user) return $this->resFail('学号不正确');
-
-            Auth::loginUsingId($user->id);
-
-            return $this->resOk();
         }
 
-        return $this->resFail();
+        return $this->resOk(['user_id' => $user->id]);
     }
 
     /**
@@ -70,17 +51,19 @@ class PestController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function questions(Request $request, $tree_sign)
+    public function pest(Request $request)
     {
-        $imgs = ['A', 'B', 'C', 'D'];
-        $pest = Pest::where('tree_sign', $tree_sign)->inRandomOrder()->first();
+        $data = Pest::orderBy('order')->limit(2)->get()->map(function ($pest) {
+            $rpest = $pest->answers()->where('is_right', 1)->get(['id', 'title']);
+            $rpest = $rpest->random($rpest->count() > $pest->right_num ? $pest->right_num : $rpest->count());
+            $dpest = $pest->answers()->where('is_right', 0)->get(['id', 'title']);
+            $dpest = $dpest->random($dpest->count() > $pest->disturb_num ? $pest->disturb_num : $dpest->count());
+            $pest->answers = $rpest->merge($dpest)->shuffle();
 
-        $level1 = Question::select('id', 'title', 'type', 'desc', 'img')->with('answers:id,question_id,title,is_right')->where('pest_id', $pest->id)->where('level', 1)->inRandomOrder()->limit(1)->get();
-        $level2 = Question::select('id', 'title', 'type', 'desc', 'img')->with('answers:id,question_id,title,is_right')->where('pest_id', $pest->id)->where('level', 2)->inRandomOrder()->limit(8)->get();
-        $level3 = Question::select('id', 'title', 'type', 'desc', 'img')->with('answers:id,question_id,title,is_right')->where('pest_id', $pest->id)->where('level', 3)->inRandomOrder()->limit(1)->get();
-        $questions = $level1->merge($level2)->merge($level3);
+            return $pest;
+        });
 
-        return view('questions', compact('tree_sign', 'questions', 'imgs'));
+        return $this->resOk($data);
     }
 
     /**
@@ -92,64 +75,27 @@ class PestController extends Controller
      */
     public function storeUserAnswer(Request $request)
     {
-        DB::beginTransaction();
-        try {
-            $data = $request->input('data');
-            $userId = Auth::id();
+        $validator = Validator::make($request->all(), [
+            'user_id'    => 'required',
+            'pest_id'    => 'required',
+            'answer_ids' => 'required|array',
+        ]);
 
-            if (empty($data)) throw  new \Exception('data is empty');
-            $record = Record::create(['user_id' => $userId]);
+        if ($validator->fails()) return $this->resFail('提交失败');
+        $param = $request->all();
 
-            $details = [];
-            foreach ($data as $item) {
-                $questionId = $item['question_id'];
-                $answerIds = $item['answer_ids'] ?? [];
-                $isRight = Question::find($questionId)->is_right($answerIds);
+        $user = User::find($param['user_id']) ?? User::firstOrCreate(['name' => '游客']);
+        $pest = Pest::find($param['pest_id']);
+        $rightAnswersCount = Answer::whereIn('id', $param['answer_ids'])->where('pest_id', $param['pest_id'])->where('is_right', 1)->count();
+        $score = $rightAnswersCount * $pest->ascore;
 
-                $details[] = [
-                    'record_id'   => $record->id,
-                    'user_id'     => $userId,
-                    'question_id' => $questionId,
-                    'answer_ids'  => implode(';', $answerIds),
-                    'is_right'    => $isRight,
-                    'score'       => $isRight ? 10 : 0,
-                    'created_at'  => now(),
-                    'updated_at'  => now(),
-                ];
-            }
+        Record::create([
+            'user_id'    => $user->id,
+            'pest_id'    => $param['pest_id'],
+            'answer_ids' => implode(';', $param['answer_ids']),
+            'score'      => $score,
+        ]);
 
-            RecordDetail::insert($details);
-            $record->score = collect($details)->pluck('score')->sum();
-            $record->save();
-            DB::commit();
-
-            return response()->json([
-                'result' => true,
-                'id'     => $record->id,
-            ]);
-        } catch (\Exception $exception) {
-            DB::rollBack();
-
-            return response()->json([
-                'result' => true,
-                'id'     => null,
-            ]);
-        }
-    }
-
-    /**
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function result(Request $request)
-    {
-        $score = 0;
-        $is_pass = false;
-        $record = Record::find($request->input('id'));
-        if ($record && $record->score >= 60) $is_pass = true;
-        if ($record) $score = $record->score;
-
-        return view('result', compact('is_pass', 'score'));
+        return $this->resOk(['is_pass' => $score >= $pest->pass_score ? true : false]);
     }
 }
