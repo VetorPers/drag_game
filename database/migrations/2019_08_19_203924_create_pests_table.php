@@ -16,7 +16,11 @@ class CreatePestsTable extends Migration
         Schema::create('pests', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->unsignedTinyInteger('tree_sign')->default(1);
+            $table->text('img');
+            $table->integer('order');
+            $table->unsignedTinyInteger('time');
+            $table->unsignedTinyInteger('ascore');
+            $table->unsignedTinyInteger('pass_score');
             $table->timestamps();
         });
     }

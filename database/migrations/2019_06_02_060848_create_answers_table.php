@@ -15,14 +15,12 @@ class CreateAnswersTable extends Migration
     {
         Schema::create('answers', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('question_id');
+            $table->unsignedTinyInteger('pest_id');
             $table->string('title');
-            $table->text('img')->nullable();
             $table->unsignedTinyInteger('is_right')->default(0);
-            $table->string('tag');
             $table->timestamps();
 
-            $table->index('question_id');
+            $table->index('pest_id');
         });
     }
 

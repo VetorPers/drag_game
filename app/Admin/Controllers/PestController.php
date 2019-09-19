@@ -6,8 +6,7 @@ use App\Pest;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Encore\Admin\Widgets\Table;
 
 class PestController extends AdminController
 {
@@ -16,7 +15,7 @@ class PestController extends AdminController
      *
      * @var string
      */
-    protected $title = '虫害';
+    protected $title = '游戏';
 
     /**
      * Make a grid builder.
@@ -28,16 +27,24 @@ class PestController extends AdminController
         $grid = new Grid(new Pest);
 
         $grid->column('id', __('Id'));
-        $grid->column('name', '名称');
-        $grid->tree_sign('所属树木')->display(function ($sign) {
-            return $sign == 2 ? '李子树' : '桃子树';
+        $grid->column('name', '名称')->modal('可选项', function ($model) {
+            $answers = $model->answers()->get()->map(function ($answer) {
+                $answer = $answer->only(['id', 'title', 'is_right', 'created_at', 'updated_at']);
+                $answer['is_right'] = $answer['is_right'] ? '是' : '否';
+
+                return $answer;
+            });
+
+            return new Table(['ID', '内容', '是否正确', '创建时间', '更新时间'], $answers->toArray());
         });
+        $grid->column('ascore', '每题分数');
+        $grid->column('order', '排序');
+        $grid->column('pass_score', '通关分数');
+        $grid->column('time', '答题时间');
         $grid->column('created_at', '创建时间');
         $grid->column('updated_at', '更新时间');
         $grid->disableExport();
-        $grid->filter(function ($filter) {
-            $filter->equal('tree_sign', '树木')->select([1 => '桃子树', 2 => '李子树']);
-        });
+        $grid->model()->orderBy('order');
 
         return $grid;
     }
@@ -52,30 +59,19 @@ class PestController extends AdminController
         $form = new Form(new Pest);
 
         $form->text('name', '名称')->required();
-        $form->select('tree_sign', '所属树木')->options([
-            1 => '桃子树',
-            2 => '李子树',
-        ])->required();
+        $form->image('img', '图片')->required();
+        $form->text('ascore', '每题分数')->required();
+        $form->text('order', '排序')->default(255)->required();
+        $form->text('pass_score', '通关分数')->required();
+        $form->text('time', '答题时间(s)')->required();
+        $form->hasMany('answers', '可选项', function (Form\NestedForm $form) {
+            $form->text('title', '内容');
+            $form->select('is_right', '是否正确')->options([
+                0 => '否',
+                1 => '是',
+            ]);
+        })->mode('table');
 
         return $form;
-    }
-
-    /**
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return mixed
-     */
-    public function treePest(Request $request)
-    {
-        $pest = Pest::all();
-
-        $res = [];
-        foreach ($pest->toArray() as $item) {
-            $res[] = [
-                'id'   => $item['id'],
-                'text' => $item['name'] . '—' . ($item['tree_sign'] == 2 ? '李子树' : '桃子树')];
-        }
-
-        return $res;
     }
 }

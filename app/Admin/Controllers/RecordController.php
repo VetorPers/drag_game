@@ -2,10 +2,11 @@
 
 namespace App\Admin\Controllers;
 
+use App\Answer;
+use App\Pest;
 use App\User;
 use App\Grade;
 use App\Record;
-use App\RecordDetail;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Admin\Extensions\RecordsExporter;
@@ -35,9 +36,14 @@ class RecordController extends AdminController
             return $this->user->grade->name;
         });
         $grid->column('user.number', '学号');
+        $grid->column('pest.name', '游戏');
+        $grid->column('answer_ids', '所选项')->display(function ($ids) {
+            return Answer::find(explode(';', $ids))->pluck('title')->map(function ($title) {
+                return "<span class='label label-success'>$title</span>&nbsp";
+            })->implode('');
+        });
         $grid->score('分数')->sortable();
         $grid->created_at('创建时间');
-        $grid->updated_at('更新时间');
 
         $grid->filter(function ($filter) {
             $filter->where(function ($query) {
@@ -49,44 +55,16 @@ class RecordController extends AdminController
                 $userIds = User::where('grade_id', $this->input)->get()->pluck('id');
                 $query->whereIn('user_id', $userIds);
             }, '班级')->select(Grade::all()->pluck('name', 'id'));
+
+            $filter->where(function ($query) {
+                $query->where('pest_id', $this->input);
+            }, '游戏')->select(Pest::all()->pluck('name', 'id'));
         });
-
-        $grid->actions(function ($actions) {
-            $actions->disableDelete();
-            $actions->disableEdit();
-        });
-        $grid->disableCreateButton();
-
-        $grid->exporter(new RecordsExporter());
-
-        return $grid;
-    }
-
-    /**
-     * Make a show builder.
-     *
-     * @param mixed $id
-     *
-     * @return Show
-     */
-    protected function detail($id)
-    {
-        $grid = new Grid(new RecordDetail);
-        $grid->model()->where('record_id', $id);
-
-        $grid->id('Id');
-        $grid->column('question.title', '题目');
-        $grid->column('answer_ids', '选择答案');
-        $grid->column('is_right', '是否正确')->display(function ($is) {
-            return $is ? '是' : '否';
-        });
-        $grid->created_at('创建时间');
-        $grid->updated_at('更新时间');
 
         $grid->disableActions();
         $grid->disableCreateButton();
-        $grid->disableExport();
-        $grid->disableTools();
+
+        $grid->exporter(new RecordsExporter());
 
         return $grid;
     }
