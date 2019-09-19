@@ -64,8 +64,8 @@ class PestController extends AdminController
         $form->text('pass_score', '通关分数')->required();
         $form->text('time', '答题时间(s)')->required();
         $form->fieldset('出题设置', function (Form $form) {
-            $form->text('right_num', '正确选项(个)')->default(10);
-            $form->text('disturb_num', '干扰选项(个)')->default(5);
+            $form->text('right_num', '正确选项(个)')->default(10)->required();
+            $form->text('disturb_num', '干扰选项(个)')->default(5)->required();
         });
         $form->hasMany('answers', '可选项', function (Form\NestedForm $form) {
             $form->text('title', '内容');
