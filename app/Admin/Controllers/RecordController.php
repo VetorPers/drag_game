@@ -39,7 +39,7 @@ class RecordController extends AdminController
         $grid->column('pest.name', '游戏');
         $grid->column('answer_ids', '所选项')->display(function ($ids) {
             return Answer::find(explode(';', $ids))->pluck('title')->map(function ($title) {
-                return "<span class='label label-success'>$title</span>&nbsp";
+                return "<span class='label label-success'>$title</span> ";
             })->implode('');
         });
         $grid->score('分数')->sortable();

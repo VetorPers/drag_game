@@ -37,8 +37,6 @@ class PestController extends AdminController
 
             return new Table(['ID', '内容', '是否正确', '创建时间', '更新时间'], $answers->toArray());
         });
-        $grid->column('ascore', '每题分数');
-        $grid->column('pass_score', '通关分数');
         $grid->column('time', '答题时间');
         $grid->column('created_at', '创建时间');
         $grid->column('updated_at', '更新时间');
@@ -59,9 +57,7 @@ class PestController extends AdminController
 
         $form->text('name', '名称')->required();
         $form->image('img', '图片')->required();
-        $form->text('ascore', '每题分数')->required();
         $form->text('order', '排序')->default(255)->required();
-        $form->text('pass_score', '通关分数')->required();
         $form->text('time', '答题时间(s)')->required();
         $form->fieldset('出题设置', function (Form $form) {
             $form->text('right_num', '正确选项(个)')->default(10)->required();

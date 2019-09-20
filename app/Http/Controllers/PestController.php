@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Validator;
 
 class PestController extends Controller
 {
+    protected $scores = [3 => 60, 4 => 70, 5 => 80, 6 => 90, 7 => 100];
+
     /**
      * @param \Illuminate\Http\Request $request
      *
@@ -94,11 +96,12 @@ class PestController extends Controller
 
         if ($validator->fails()) return $this->resFail('提交失败');
         $param = $request->all();
+        $param['answer_ids'] = array_unique($param['answer_ids']);
 
         $user = User::find($param['user_id']) ?? User::firstOrCreate(['name' => '游客']);
-        $pest = Pest::find($param['pest_id']);
         $rightAnswersCount = Answer::whereIn('id', $param['answer_ids'])->where('pest_id', $param['pest_id'])->where('is_right', 1)->count();
-        $score = $rightAnswersCount * $pest->ascore;
+
+        $score = $this->scores[$rightAnswersCount] ?? ($rightAnswersCount > max(array_keys($this->scores)) ? 100 : 0);
 
         Record::create([
             'user_id'    => $user->id,
@@ -107,6 +110,6 @@ class PestController extends Controller
             'score'      => $score,
         ]);
 
-        return $this->resOk(['is_pass' => $score >= $pest->pass_score ? true : false]);
+        return $this->resOk(['is_pass' => $score >= 60 ? true : false]);
     }
 }

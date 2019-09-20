@@ -23,19 +23,19 @@
                     </thead>
                     <tbody>
                     <tr>
-                        <th scope="row">0~6</th>
+                        <th scope="row">0~60</th>
                         <td class="td1">{{ $all[0] }}</td>
                     </tr>
                     <tr>
-                        <th scope="row">6~7</th>
+                        <th scope="row">60~70</th>
                         <td class="td2">{{ $all[1] }}</td>
                     </tr>
                     <tr>
-                        <th scope="row">7~8</th>
+                        <th scope="row">70~80</th>
                         <td class="td3">{{ $all[2] }}</td>
                     </tr>
                     <tr>
-                        <th scope="row">>=8</th>
+                        <th scope="row">>=80</th>
                         <td class="td4">{{ $all[3] }}</td>
                     </tr>
                     </tbody>
@@ -94,10 +94,10 @@
             }],
 
             labels: [
-                '0~6',
-                '6~7',
-                '7~8',
-                '>=8'
+                '0~60',
+                '60~70',
+                '70~80',
+                '>=80'
             ]
         };
 

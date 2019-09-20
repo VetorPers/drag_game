@@ -42,10 +42,10 @@ class ChartController extends Controller
         }
 
         return [
-            $record->where('score', '<', 6)->count(),
-            $record->where('score', '>=', 6)->where('score', '<', 7)->count(),
-            $record->where('score', '>=', 7)->where('score', '<', 8)->count(),
-            $record->where('score', '>=', 8)->count(),
+            $record->where('score', '<', 60)->count(),
+            $record->where('score', '>=', 60)->where('score', '<', 70)->count(),
+            $record->where('score', '>=', 70)->where('score', '<', 80)->count(),
+            $record->where('score', '>=', 80)->count(),
         ];
     }
 }

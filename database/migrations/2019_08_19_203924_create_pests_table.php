@@ -22,8 +22,6 @@ class CreatePestsTable extends Migration
             $table->unsignedTinyInteger('right_num')->default(10);
             $table->unsignedTinyInteger('disturb_num')->default(5);
             $table->unsignedTinyInteger('time');
-            $table->unsignedTinyInteger('ascore');
-            $table->unsignedTinyInteger('pass_score');
             $table->timestamps();
         });
     }
