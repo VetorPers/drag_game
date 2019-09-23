@@ -86,7 +86,7 @@ class PestController extends Controller
         }
 
         shuffle($answers);
-        $info->answers = $answers;
+        $info['answers'] = $answers;
 
         return $this->resOk($info);
     }
