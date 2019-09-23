@@ -1,4 +1,7 @@
 <div class="box">
+    <audio id="refreshi" autoplay>
+        <source src="{{asset('audio/refreshi.mp3')}}"/>
+    </audio>
 
     <div class="box-header with-border">
         <div class="col-md-3">
@@ -126,6 +129,36 @@
                 allChart.data.datasets[0].data = res.data
                 allChart.update()
             })
-        })
+        });
+
+        function forceSafariPlayAudio() {
+            audioEl.load(); // iOS 9   还需要额外的 load 一下, 否则直接 play 无效
+            audioEl.play(); // iOS 7/8 仅需要 play 一下
+        }
+
+        var audioEl = $('#refreshi')[0];
+
+        // 可以自动播放时正确的事件顺序是
+        audioEl.addEventListener('play', function () {
+            // 当 audio 能够播放后, 移除这个事件
+            window.removeEventListener('touchstart', forceSafariPlayAudio, false);
+        }, false);
+
+        // 由于 iOS Safari 限制不允许 audio autoplay, 必须用户主动交互(例如 click)后才能播放 audio,
+        // 因此我们通过一个用户交互事件来主动 play 一下 audio.
+        window.addEventListener('touchstart', forceSafariPlayAudio, false);
+
+        // 自动刷新页面
+        var maxTime = 5; // seconds
+        var time = maxTime;
+        $('body').on('keydown mousemove touchmove', function (e) {
+            time = maxTime;
+        });
+        var intervalId = setInterval(function () {
+            time--;
+            if (time <= 0) {
+                location.reload()
+            }
+        }, 1000)
     });
 </script>
