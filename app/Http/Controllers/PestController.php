@@ -55,28 +55,40 @@ class PestController extends Controller
      */
     public function pest(Request $request)
     {
-        $data = Pest::orderBy('order')->limit(2)->get()->map(function ($pest) {
-            $answers = [];
-
-            $rpest = $pest->answers()->where('is_right', 1)->get(['id', 'title']);
-            if ($rpest->isNotEmpty()) {
-                $rpest = $rpest->random($rpest->count() > $pest->right_num ? $pest->right_num : $rpest->count())->all();
-                $answers = array_merge($answers, $rpest);
-            }
-
-            $dpest = $pest->answers()->where('is_right', 0)->get(['id', 'title']);
-            if ($dpest->isNotEmpty()) {
-                $dpest = $dpest->random($dpest->count() > $pest->disturb_num ? $pest->disturb_num : $dpest->count())->all();
-                $answers = array_merge($answers, $dpest);
-            }
-
-            shuffle($answers);
-            $pest->answers = $answers;
-
-            return $pest;
-        });
+        $data = Pest::orderBy('order')->limit(2)->get(['id', 'name', 'img', 'time']);
 
         return $this->resOk($data);
+    }
+
+    /**
+     * 获取问题详情
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function pestInfo(Request $request)
+    {
+        $pest = Pest::find($request->input('pest_id'));
+        $info = $pest->only(['id', 'name', 'img', 'time']);
+        $answers = [];
+
+        $rpest = $pest->answers()->where('is_right', 1)->get(['id', 'title']);
+        if ($rpest->isNotEmpty()) {
+            $rpest = $rpest->random($rpest->count() > $pest->right_num ? $pest->right_num : $rpest->count())->all();
+            $answers = array_merge($answers, $rpest);
+        }
+
+        $dpest = $pest->answers()->where('is_right', 0)->get(['id', 'title']);
+        if ($dpest->isNotEmpty()) {
+            $dpest = $dpest->random($dpest->count() > $pest->disturb_num ? $pest->disturb_num : $dpest->count())->all();
+            $answers = array_merge($answers, $dpest);
+        }
+
+        shuffle($answers);
+        $info->answers = $answers;
+
+        return $this->resOk($info);
     }
 
     /**
