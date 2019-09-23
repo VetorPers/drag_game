@@ -58,13 +58,13 @@ class PestController extends Controller
         $data = Pest::orderBy('order')->limit(2)->get()->map(function ($pest) {
             $answers = [];
 
-            $rpest = $pest->answers()->where('is_right', 1)->get(['id', 'title']);
+            $rpest = $pest->answers()->where('is_right', 1)->get(['id', 'title', 'is_right']);
             if ($rpest->isNotEmpty()) {
                 $rpest = $rpest->random($rpest->count() > $pest->right_num ? $pest->right_num : $rpest->count())->all();
                 $answers = array_merge($answers, $rpest);
             }
 
-            $dpest = $pest->answers()->where('is_right', 0)->get(['id', 'title']);
+            $dpest = $pest->answers()->where('is_right', 0)->get(['id', 'title', 'is_right']);
             if ($dpest->isNotEmpty()) {
                 $dpest = $dpest->random($dpest->count() > $pest->disturb_num ? $pest->disturb_num : $dpest->count())->all();
                 $answers = array_merge($answers, $dpest);
@@ -110,6 +110,9 @@ class PestController extends Controller
             'score'      => $score,
         ]);
 
-        return $this->resOk(['is_pass' => $score >= 60 ? true : false]);
+        return $this->resOk([
+            'is_pass' => $score >= 60 ? true : false,
+            'score'   => $score,
+        ]);
     }
 }
