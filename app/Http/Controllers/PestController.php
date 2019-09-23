@@ -58,13 +58,13 @@ class PestController extends Controller
         $data = Pest::orderBy('order')->limit(2)->get()->map(function ($pest) {
             $answers = [];
 
-            $rpest = $pest->answers()->where('is_right', 1)->get(['id', 'title', 'is_right']);
+            $rpest = $pest->answers()->where('is_right', 1)->get(['id', 'title']);
             if ($rpest->isNotEmpty()) {
                 $rpest = $rpest->random($rpest->count() > $pest->right_num ? $pest->right_num : $rpest->count())->all();
                 $answers = array_merge($answers, $rpest);
             }
 
-            $dpest = $pest->answers()->where('is_right', 0)->get(['id', 'title', 'is_right']);
+            $dpest = $pest->answers()->where('is_right', 0)->get(['id', 'title']);
             if ($dpest->isNotEmpty()) {
                 $dpest = $dpest->random($dpest->count() > $pest->disturb_num ? $pest->disturb_num : $dpest->count())->all();
                 $answers = array_merge($answers, $dpest);
@@ -99,7 +99,8 @@ class PestController extends Controller
         $param['answer_ids'] = array_unique($param['answer_ids']);
 
         $user = User::find($param['user_id']) ?? User::firstOrCreate(['name' => '游客']);
-        $rightAnswersCount = Answer::whereIn('id', $param['answer_ids'])->where('pest_id', $param['pest_id'])->where('is_right', 1)->count();
+        $rightAnswers = Answer::whereIn('id', $param['answer_ids'])->where('pest_id', $param['pest_id'])->where('is_right', 1)->get();
+        $rightAnswersCount = $rightAnswers->count();
 
         $score = $this->scores[$rightAnswersCount] ?? ($rightAnswersCount > max(array_keys($this->scores)) ? 100 : 0);
 
@@ -111,8 +112,9 @@ class PestController extends Controller
         ]);
 
         return $this->resOk([
-            'is_pass' => $score >= 60 ? true : false,
-            'score'   => $score,
+            'right_answers' => $rightAnswers->pluck('title'),
+            'is_pass'       => $score >= 60 ? true : false,
+            'score'         => $score,
         ]);
     }
 }
