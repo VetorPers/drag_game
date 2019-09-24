@@ -72,6 +72,7 @@ class PestController extends Controller
         $pest = Pest::find($request->input('pest_id'));
         $info = $pest->only(['id', 'name', 'img', 'time']);
         $info['answers'] = Answer::select('id', 'title')->where('pest_id', $pest->id)->get()->shuffle();
+        $info['count'] = Answer::select('id', 'title')->where('pest_id', $pest->id)->where('is_right', 1)->count();
 
         return $this->resOk($info);
     }
@@ -86,7 +87,6 @@ class PestController extends Controller
     public function storeUserAnswer(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id'    => 'required',
             'pest_id'    => 'required',
             'answer_ids' => 'required|array',
         ]);
@@ -95,7 +95,7 @@ class PestController extends Controller
         $param = $request->all();
         $param['answer_ids'] = array_unique($param['answer_ids']);
 
-        $user = User::find($param['user_id']) ?? User::firstOrCreate(['name' => '游客']);
+        $user = isset($param['user_id']) ? User::findOrFail($param['user_id']) : User::firstOrCreate(['name' => '游客']);
         $pest = Pest::find($param['pest_id']);
 
         $rightAnswersCount = $pest->answers->where('is_right', 1)->whereIn('id', $param['answer_ids'])->count();
@@ -112,6 +112,7 @@ class PestController extends Controller
             'right_answers' => $pest->answers->where('is_right', 1)->pluck('title'),
             'is_pass'       => $score >= 60 ? true : false,
             'score'         => $score,
+            'name'          => $pest->name,
         ]);
     }
 }
