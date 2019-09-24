@@ -37,7 +37,7 @@ class PestController extends AdminController
 
             return new Table(['ID', '内容', '是否正确', '创建时间', '更新时间'], $answers->toArray());
         });
-        $grid->column('time', '答题时间');
+        $grid->column('time', '答题时间(s)');
         $grid->column('created_at', '创建时间');
         $grid->column('updated_at', '更新时间');
         $grid->disableExport();
@@ -59,17 +59,15 @@ class PestController extends AdminController
         $form->image('img', '图片')->required();
         $form->text('order', '排序')->default(255)->required();
         $form->text('time', '答题时间(s)')->required();
-        $form->fieldset('出题设置', function (Form $form) {
-            $form->text('right_num', '正确选项(个)')->default(10)->required();
-            $form->text('disturb_num', '干扰选项(个)')->default(5)->required();
+        $form->fieldset('选项设置', function (Form $form) {
+            $form->hasMany('answers', '', function (Form\NestedForm $form) {
+                $form->text('title', '内容');
+                $form->select('is_right', '是否正确')->options([
+                    0 => '否',
+                    1 => '是',
+                ]);
+            })->mode('table');
         });
-        $form->hasMany('answers', '可选项', function (Form\NestedForm $form) {
-            $form->text('title', '内容');
-            $form->select('is_right', '是否正确')->options([
-                0 => '否',
-                1 => '是',
-            ]);
-        })->mode('table');
 
         return $form;
     }

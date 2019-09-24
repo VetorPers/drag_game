@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pest extends Model
 {
-    protected $fillable = ['name', 'img', 'order', 'time', 'right_num', 'disturb_num'];
+    protected $fillable = ['name', 'img', 'order', 'time'];
 
     public function getImgAttribute($value)
     {
