@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\DB;
 
 class ChartController extends Controller
 {
-    public function index(Content $content)
+    public function index(Content $content, Request $request)
     {
-        $all = $this->getScoreData();
+        $all = $this->getScoreData($request->input('grade_id', 0));
         $total = array_sum($all);
         $today = Record::whereDate('created_at', now()->toDateString())->count();
         $grades = Grade::all();

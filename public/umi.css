@@ -50,7 +50,7 @@
 .fly {
   position: relative;
   animation: fly 2s linear infinite;
-  margin-left: 50%;
+  margin-left: 60%;
   margin-top: 100px;
   z-index: 3;
 }
@@ -81,9 +81,6 @@
 }
 
 @media screen {
-  .game1 :havor {
-    background-color: #a7e6ff;
-  }
   .choose-box {
     position: absolute;
     left: 50%;
@@ -109,6 +106,13 @@
     -ms-flex-pack: center;
         justify-content: center;
   }
+  .choose-box > div:hover {
+    cursor: pointer;
+    background-color: #a7e6ff;
+  }
+  .choose-box > div:hover div {
+    color: #079CDB;
+  }
   .choose-box > div img {
     width: 95%;
     position: absolute;
@@ -125,7 +129,7 @@
     position: relative;
     z-index: 1;
     font-family: 'Arch';
-    color: #009dde;
+    color: #F3FFFF;
     word-break: break-all;
   }
   .choose-box > div:first-child {
@@ -155,6 +159,9 @@
 }
 .login-box img {
   width: 100%;
+}
+.login-box img:hover {
+  cursor: pointer;
 }
 
 .login-box {
@@ -195,6 +202,9 @@
     font-size: 30px;
     font-family: 'Trend';
   }
+  .restartBtn {
+    cursor: pointer;
+  }
   .resultWrapper {
     text-align: center;
     width: 648px;
@@ -233,7 +243,7 @@
   height: 60%;
   position: absolute;
   width: 100%;
-  bottom: 0;
+  bottom: 30px;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-direction: column;
@@ -355,13 +365,16 @@
   border-radius: 10px;
   position: absolute;
   right: 80px;
-  bottom: 80px;
+  bottom: 50px;
   width: 190px;
   padding: 10px;
   z-index: 1;
 }
 .submit.active {
   display: block;
+}
+.submit:hover {
+  cursor: pointer;
 }
 
 .startGame {
@@ -370,6 +383,9 @@
   margin-left: -143px;
   margin-top: -39px;
   top: 50%;
+}
+.startGame:hover {
+  cursor: pointer;
 }
 
 /*! modern-normalize | MIT License | https://github.com/sindresorhus/modern-normalize */

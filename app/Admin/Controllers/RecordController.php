@@ -7,6 +7,7 @@ use App\Pest;
 use App\User;
 use App\Grade;
 use App\Record;
+use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Admin\Extensions\RecordsExporter;
@@ -33,7 +34,7 @@ class RecordController extends AdminController
         $grid->id('Id');
         $grid->column('user.name', '姓名');
         $grid->column('', '班级')->display(function () {
-            return $this->user->grade->name;
+            return $this['user']['grade']['name'] ?? '';
         });
         $grid->column('user.number', '学号');
         $grid->column('pest.name', '游戏');
@@ -61,11 +62,32 @@ class RecordController extends AdminController
             }, '游戏')->select(Pest::all()->pluck('name', 'id'));
         });
 
-        $grid->disableActions();
+        $grid->actions(function ($actions) {
+            $actions->disableEdit();
+            $actions->disableView();
+        });
+
+        $grid->disableRowSelector(false);
         $grid->disableCreateButton();
 
         $grid->exporter(new RecordsExporter());
 
         return $grid;
+    }
+
+    /**
+     * Make a form builder.
+     *
+     * @return Form
+     */
+    protected function form()
+    {
+        $form = new Form(new Record);
+
+        $form->text('user_id', '用户id')->required();
+        $form->text('pest_id', '游戏id')->required();
+        $form->select('score', '分数')->required();
+
+        return $form;
     }
 }

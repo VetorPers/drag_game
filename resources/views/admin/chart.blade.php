@@ -125,10 +125,11 @@
         });
 
         $('.grades-select').change(function () {
-            $.post('/admin/charts', {'grade_id': $(this).val()}, function (res) {
-                allChart.data.datasets[0].data = res.data
-                allChart.update()
-            })
+            // $.post('/admin/charts', {'grade_id': $(this).val()}, function (res) {
+            //     allChart.data.datasets[0].data = res.data
+            //     allChart.update()
+            // })
+            location.href = '/admin?grade_id=' + $(this).val();
         });
 
         function forceSafariPlayAudio() {
@@ -149,7 +150,7 @@
         window.addEventListener('touchstart', forceSafariPlayAudio, false);
 
         // 自动刷新页面
-        var maxTime = 5; // seconds
+        var maxTime = 3; // seconds
         var time = maxTime;
         $('body').on('keydown mousemove touchmove', function (e) {
             time = maxTime;
