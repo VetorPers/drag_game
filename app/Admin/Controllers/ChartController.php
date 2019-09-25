@@ -15,14 +15,15 @@ class ChartController extends Controller
 {
     public function index(Content $content, Request $request)
     {
-        $all = $this->getScoreData($request->input('grade_id', 0));
+        $grade_id = $request->input('grade_id', 0);
+        $all = $this->getScoreData($grade_id);
         $total = array_sum($all);
         $today = Record::whereDate('created_at', now()->toDateString())->count();
         $grades = Grade::all();
 
         return $content
             ->header('首页')
-            ->body(view('admin.chart', compact('total', 'today', 'grades', 'all')));
+            ->body(view('admin.chart', compact('total', 'today', 'grades', 'all', 'grade_id')));
     }
 
     public function getData(Request $request)

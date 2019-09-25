@@ -59,7 +59,11 @@
                 <option></option>
                 <option value="0">全部</option>
                 @foreach($grades as $grade)
-                    <option value="{{ $grade->id }}">{{ $grade->name }}</option>
+                    <option value="{{ $grade->id }}"
+                            @if($grade->id==$grade_id)
+                                selected
+                            @endif
+                    >{{ $grade->name }}</option>
                 @endforeach
             </select>
 
