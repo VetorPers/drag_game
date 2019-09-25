@@ -93,10 +93,11 @@ class PestController extends Controller
 
         if ($validator->fails()) return $this->resFail('提交失败');
         $param = $request->all();
-        $param['answer_ids'] = array_unique($param['answer_ids']);
 
         $user = isset($param['user_id']) ? User::findOrFail($param['user_id']) : User::firstOrCreate(['name' => '游客']);
         $pest = Pest::find($param['pest_id']);
+        $count = $pest->answers->where('is_right', 1)->count();
+        $param['answer_ids'] = array_unique(array_slice($param['answer_ids'], 0, $count));
 
         $rightAnswersCount = $pest->answers->where('is_right', 1)->whereIn('id', $param['answer_ids'])->count();
         $score = $this->scores[$rightAnswersCount] ?? ($rightAnswersCount > max(array_keys($this->scores)) ? 100 : 0);
