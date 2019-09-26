@@ -14,36 +14,34 @@
         </div>
     </div>
 
-    <div class="box-body">
-        <div class="col-md-4">
-            <div class="col-md-offset-1" style="margin-top: 30%">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>分数段</th>
-                        <th>数量(次)</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <th scope="row">0~60</th>
-                        <td class="td1">{{ $all[0] }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">60~70</th>
-                        <td class="td2">{{ $all[1] }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">70~80</th>
-                        <td class="td3">{{ $all[2] }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">>=80</th>
-                        <td class="td4">{{ $all[3] }}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+    <div class="box-body" style="display:flex;">
+        <div class="col-md-4" style="padding-top: 10%">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>分数段</th>
+                    <th>数量(次)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">0~60</th>
+                    <td class="td1">{{ $all[0] }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">60~70</th>
+                    <td class="td2">{{ $all[1] }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">70~80</th>
+                    <td class="td3">{{ $all[2] }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">>=80</th>
+                    <td class="td4">{{ $all[3] }}</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
 
         <div class="col-md-6">
@@ -55,22 +53,24 @@
         </div>
 
         <div class="col-md-2">
-            <select class="grades-select js-states form-control" name="state">
-                <option></option>
-                <option value="0">全部</option>
-                @foreach($grades as $grade)
-                    <option value="{{ $grade->id }}"
-                            @if($grade->id==$grade_id)
+            <div class="select-box">
+                <select class="grades-select js-states form-control" name="state">
+                    <option></option>
+                    <option value="0">全部</option>
+                    @foreach($grades as $grade)
+                        <option value="{{ $grade->id }}"
+                                @if($grade->id==$grade_id)
                                 selected
-                            @endif
-                    >{{ $grade->name }}</option>
-                @endforeach
-            </select>
+                                @endif
+                        >{{ $grade->name }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-            <div class="media" style="margin-top: 200%">
+            <div style="margin-top: 200%">
                 <div class="media-body">
                     <h4 class="media-heading">Tips:</h4>
-                    <div class="small" style="margin-top: 5%">
+                    <div class="small">
                         <ul class="list-unstyled">
                             <li><p>选择班级查看班级内分数分布图。</p></li>
                         </ul>
