@@ -4,22 +4,31 @@ namespace App\Admin\Extensions;
 
 
 use Encore\Admin\Grid\Exporters\ExcelExporter;
+use Maatwebsite\Excel\Concerns\WithMapping;
 
-class RecordsExporter extends ExcelExporter
+class RecordsExporter extends ExcelExporter implements WithMapping
 {
     protected $fileName = '学生成绩.xlsx';
     protected $columns = [
-        'id'     => 'Id',
-        'name'   => '姓名',
-        'gname'  => '班级',
-        'number' => '学号',
-        'score'  => '分数',
+        'id'              => 'Id',
+        'user_id'         => '用户Id',
+        'user.name'       => '姓名',
+        'user.grade_id'   => '班级Id',
+        'user.grade.name' => '班级',
+        'user.number'     => '学号',
+        'score'           => '分数',
     ];
 
-    public function query()
+    public function map($recod): array
     {
-        return $this->getQuery()->select('records.id', 'users.name', 'grades.name as gname', 'users.number', 'score')
-            ->leftJoin('users', 'user_id', 'users.id')
-            ->leftJoin('grades', 'users.grade_id', 'grades.id');
+        return [
+            $recod->id,
+            $recod->user_id,
+            data_get($recod, 'user.name'),
+            data_get($recod, 'user.grade_id'),
+            data_get($recod, 'user.grade.name'),
+            data_get($recod, 'user.number'),
+            $recod->score,
+        ];
     }
 }
